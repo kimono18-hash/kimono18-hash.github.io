@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人主页 - 1998 复古终端</title>
+  <style>
+    :root {
+      --desktop-bg: #008080;       /* 经典 Win95 青绿桌面底色 */
+      --win-bg: #c0c0c0;           /* 经典系统灰 */
+      --win-light: #ffffff;
+      --win-mid-light: #dfdfdf;
+      --win-shadow: #808080;
+      --win-dark: #000000;
+      --title-active: #000080;     /* 经典深蓝标题栏 */
+      --title-text: #ffffff;
+      --content-bg: #ffffff;
+      --link-blue: #0000ee;
+      --link-visited: #551a8b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 12px 56px;
+      background-color: var(--desktop-bg);
+      /* 微妙的像素点阵背景纹理 */
+      background-image: radial-gradient(#006666 1px, transparent 0);
+      background-size: 4px 4px;
+      color: #000000;
+      font-family: "SimSun", "宋体", "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* 经典 3D 凸起边框 */
+    .bevel-out {
+      background: var(--win-bg);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-dark);
+      border-bottom: 2px solid var(--win-dark);
+      box-shadow: inset -1px -1px 0 var(--win-shadow), inset 1px 1px 0 var(--win-mid-light);
+    }
+
+    /* 经典 3D 凹陷边框 */
+    .bevel-in {
+      background: var(--content-bg);
+      border-top: 2px solid var(--win-shadow);
+      border-left: 2px solid var(--win-shadow);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      box-shadow: inset 1px 1px 0 var(--win-dark), inset -1px -1px 0 var(--win-mid-light);
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* 窗口结构 */
+    .window {
+      padding: 3px;
+    }
+
+    .title-bar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      color: var(--title-text);
+      padding: 4px 6px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      letter-spacing: 0.5px;
+      user-select: none;
+    }
+
+    .title-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .win-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      background: #ffff00;
+      border: 1px solid #000;
+      text-align: center;
+      line-height: 12px;
+      font-size: 10px;
+      color: #000;
+    }
+
+    .title-buttons {
+      display: flex;
+      gap: 2px;
+    }
+
+    .win-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--win-bg);
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-dark);
+      border-bottom: 1px solid var(--win-dark);
+      color: #000;
+      font-size: 10px;
+      line-height: 11px;
+      text-align: center;
+      font-family: sans-serif;
+      font-weight: bold;
+    }
+
+    /* 窗口菜单栏 */
+    .menu-bar {
+      padding: 3px 8px;
+      border-bottom: 1px solid var(--win-shadow);
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .menu-bar a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .menu-bar a:hover {
+      background: #000080;
+      color: #fff;
+      padding: 0 3px;
+    }
+
+    .menu-bar span u {
+      text-decoration: underline;
+    }
+
+    .window-body {
+      padding: 14px;
+    }
+
+    /* 1. 头像与简介模块 */
+    .profile-grid {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .avatar-box {
+      width: 104px;
+      height: 104px;
+      flex-shrink: 0;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #000080;
+    }
+
+    /* 内置复古像素头像 SVG（无需外部图片即可显示，也可替换为 <img src="avatar.png">） */
+    .avatar-svg {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+
+    .profile-info h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-family: "SimHei", "黑体", monospace;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: #ffffcc;
+      border: 1px dashed #808000;
+      padding: 1px 6px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .profile-info p {
+      margin: 6px 0;
+    }
+
+    /* 2. 文章随笔列表 */
+    .essay-list {
+      padding: 10px 12px;
+      list-style: none;
+      margin: 0;
+    }
+
+    .essay-item {
+      padding: 8px 4px;
+      border-bottom: 1px dotted #808080;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .essay-item:last-child {
+      border-bottom: none;
+    }
+
+    .essay-link {
+      color: var(--link-blue);
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .essay-link:hover {
+      background: #000080;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .essay-tag {
+      font-size: 12px;
+      color: #444;
+      background: #efefef;
+      border: 1px solid #b0b0b0;
+      padding: 0 4px;
+      margin-right: 6px;
+    }
+
+    .essay-date {
+      color: #555;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    /* 3. 作品展示模块 */
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+    }
+
+    .work-card {
+      padding: 10px;
+      background: #f4f4f4;
+      border: 1px solid #808080;
+    }
+
+    .work-card h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: #000080;
+    }
+
+    .work-card p {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: #222;
+    }
+
+    .retro-btn {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--win-bg);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-dark);
+      border-bottom: 2px solid var(--win-dark);
+      color: #000;
+      text-decoration: none;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .retro-btn:active {
+      border-top: 2px solid var(--win-dark);
+      border-left: 2px solid var(--win-dark);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      padding: 4px 9px 2px 11px;
+    }
+
+    /* 4. 联系方式模块 */
+    .contact-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    .contact-table td {
+      border: 1px solid #808080;
+      padding: 6px 10px;
+    }
+
+    .contact-label {
+      width: 120px;
+      background: #e8e8e8;
+      font-weight: bold;
+    }
+
+    /* 底部状态栏信息 */
+    .status-bar {
+      margin-top: 10px;
+      display: flex;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .status-cell {
+      padding: 2px 8px;
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      flex: 1;
+    }
+
+    /* 弹窗文章阅读器（记事本风格） */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 100;
+      padding: 24px 12px;
+      overflow-y: auto;
+    }
+
+    .reader-window {
+      max-width: 680px;
+      margin: 20px auto;
+      padding: 3px;
+    }
+
+    .reader-content {
+      padding: 18px 20px;
+      max-height: 65vh;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .reader-content h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #000;
+      padding-bottom: 6px;
+      font-size: 18px;
+    }
+
+    /* 底部固定任务栏 */
+    .taskbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32px;
+      background: var(--win-bg);
+      border-top: 2px solid var(--win-light);
+      padding: 2px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    .start-btn {
+      font-weight: bold;
+      padding: 2px 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+    }
+
+    .clock-box {
+      padding: 2px 10px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+    }
+
+    @media (max-width: 600px) {
+      .profile-grid {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .essay-item {
+        flex-direction: column;
+        gap: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- 窗口 1：个人档案（头像 + 简介） -->
+    <section id="about" class="window bevel-out">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <span class="win-icon">A:</span>
+          <span>ABOUT_ME.EXE - 个人档案</span>
+        </div>
+        <div class="title-buttons">
+          <span class="win-btn">_</span>
+          <span class="win-btn">□</span>
+          <span class="win-btn">×</span>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <a href="#about"><span><u>A</u>bout(简介)</span></a>
+        <a href="#essays"><span><u>E</u>ssays(随笔)</span></a>
+        <a href="#works"><span><u>W</u>orks(作品)</span></a>
+        <a href="#contact"><span><u>C</u>ontact(联系)</span></a>
+      </div>
+
+      <div class="window-body">
+        <div class="profile-grid">
+          <div class="avatar-box bevel-in">
+            <!-- 默认像素计算机头像，若使用本地图片可替换为：<img src="avatar.jpg" alt="头像" style="width:100%;height:100%;object-fit:cover;"> -->
+            <svg class="avatar-svg" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+              <rect width="16" height="16" fill="#000080"/>
+              <rect x="2" y="2" width="12" height="9" fill="#c0c0c0"/>
+              <rect x="3" y="3" width="10" height="7" fill="#008080"/>
+              <rect x="5" y="5" width="2" height="2" fill="#ffffff"/>
+              <rect x="9" y="5" width="2" height="2" fill="#ffffff"/>
+              <rect x="6" y="8" width="4" height="1" fill="#ffff00"/>
+              <rect x="4" y="12" width="8" height="2" fill="#c0c0c0"/>
+              <rect x="2" y="14" width="12" height="1" fill="#808080"/>
+            </svg>
+          </div>
+
+          <div class="profile-info">
+            <h1>你的名字 / NICKNAME</h1>
+            <div class="status-badge">● 当前状态：正在整理旧软盘与随笔手稿...</div>
+            <p>你好，欢迎来到我的个人主页。这里存放着我平时写下的非虚构随笔、读书笔记，以及一些零散的折腾记录。</p>
+            <p>我喜欢慢节奏的文字阅读、纸质书排版，以及那些经得起时间考验的旧器物与老界面。希望这里的文字能给你带来片刻安静。</p>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <div class="status-cell">就绪</div>
+          <div class="status-cell">编码: UTF-8</div>
+          <div class="status-cell">访客计数器: 001998</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 窗口 2：文章随笔 -->
+    <section id="essays" class="window bevel-out">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <span class="win-icon">TXT</span>
+          <span>C:\MY_DOCUMENTS\ESSAYS - 文章随笔（点击标题阅读）</span>
+        </div>
+        <div class="title-buttons">
+          <span class="win-btn">_</span>
+          <span class="win-btn">□</span>
+          <span class="win-btn">×</span>
+        </div>
+      </div>
+
+      <div class="window-body">
+        <ul class="essay-list bevel-in">
+          <li class="essay-item">
+            <div>
+              <span class="essay-tag">随笔</span>
+              <span class="essay-link" onclick="openEssay('essay1')">关于旧时光、老电脑与慢速写作的二三事</span>
+            </div>
+            <span class="essay-date">2026-11-20</span>
+          </li>
+          <li class="essay-item">
+            <div>
+              <span class="essay-tag">游记</span>
+              <span class="essay-link" onclick="openEssay('essay2')">秋日古寺行记：檐角风铃与石刻残影</span>
+            </div>
+            <span class="essay-date">2026-10-08</span>
+          </li>
+          <li class="essay-item">
+            <div>
+              <span class="essay-tag">书话</span>
+              <span class="essay-link" onclick="openEssay('essay3')">为什么我们依然需要一本排版克制的纸质书</span>
+            </div>
+            <span class="essay-date">2026-09-15</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 窗口 3：作品展示 -->
+    <section id="works" class="window bevel-out">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <span class="win-icon">DIR</span>
+          <span>WORKS_ARCHIVE - 个人作品与项目</span>
+        </div>
+        <div class="title-buttons">
+          <span class="win-btn">_</span>
+          <span class="win-btn">□</span>
+          <span class="win-btn">×</span>
+        </div>
+      </div>
+
+      <div class="window-body">
+        <div class="works-grid">
+          <div class="work-card">
+            <h3>[01] 随笔集手稿《日常切片》</h3>
+            <p>收录近两年写下的生活观察与人物特写，采用经典衬线字体与双语对照版式编排。</p>
+            <a class="retro-btn" href="javascript:void(0)" onclick="openEssay('essay1')">打开预览 &gt;&gt;</a>
+          </div>
+
+          <div class="work-card">
+            <h3>[02] 独立刊物与读本设计</h3>
+            <p>探索轻量级读物的版心比例、字距规范与印刷纸张触感实验。</p>
+            <a class="retro-btn" href="#contact">索取样章 &gt;&gt;</a>
+          </div>
+
+          <div class="work-card">
+            <h3>[03] 桌面小工具与硬件实验</h3>
+            <p>一些自娱自乐的音频电路焊接笔记与复古风格小型网页实验。</p>
+            <a class="retro-btn" href="https://github.com" target="_blank">访问仓库 &gt;&gt;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 窗口 4：联系方式 -->
+    <section id="contact" class="window bevel-out">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <span class="win-icon">@</span>
+          <span>MODEM_LINK.INF - 联系方式</span>
+        </div>
+        <div class="title-buttons">
+          <span class="win-btn">_</span>
+          <span class="win-btn">□</span>
+          <span class="win-btn">×</span>
+        </div>
+      </div>
+
+      <div class="window-body">
+        <table class="contact-table">
+          <tr>
+            <td class="contact-label">电子邮箱</td>
+            <td><a href="mailto:yourname@example.com">yourname@example.com</a> （欢迎来信交流文章与阅读感想）</td>
+          </tr>
+          <tr>
+            <td class="contact-label">GitHub 主页</td>
+            <td><a href="https://github.com" target="_blank">https://github.com/yourusername</a></td>
+          </tr>
+          <tr>
+            <td class="contact-label">其他专栏</td>
+            <td>小红书 / 个人公众号：<strong>@你的专栏名称</strong></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 记事本弹窗阅读器（点击文章标题时弹出） -->
+  <div id="readerModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="reader-window bevel-out" onclick="event.stopPropagation()">
+      <div class="title-bar">
+        <div class="title-bar-left">
+          <span class="win-icon">✎</span>
+          <span id="readerWinTitle">NOTEPAD.EXE - 文章阅读</span>
+        </div>
+        <div class="title-buttons">
+          <button class="win-btn" style="cursor:pointer;padding:0;" onclick="forceCloseModal()">×</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div id="readerBody" class="reader-content bevel-in"></div>
+        <div style="margin-top: 10px; text-align: right;">
+          <button class="retro-btn" onclick="forceCloseModal()">关闭窗口 (Close)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部任务栏 -->
+  <footer class="taskbar">
+    <button class="start-btn bevel-out" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+      <span>❖</span> 开始 (Top)
+    </button>
+    <div style="font-size: 12px; color: #333;">最佳浏览分辨率: 800×600 或 1024×768</div>
+    <div id="clock" class="clock-box">19:98</div>
+  </footer>
+
+  <script>
+    // 文章内容数据库：你可以直接在这里修改或新增随笔正文
+    const essaysData = {
+      essay1: {
+        title: "关于旧时光、老电脑与慢速写作的二三事",
+        date: "2026年11月20日",
+        content: `
+          <p>九十年代末的电脑屏幕总是带着一点淡淡的荧光与微温。那时候硬盘读写会发出清脆的“咔哒”声，打开一个纯文本记事本只需要一眨眼，没有弹窗广告，也没有无穷无尽的信息流推送。</p>
+          <p>在那样简洁的窗口里敲字，人反而容易静下心来。每一段话的起承转合、每一个标点符号的停顿，都显得格外清晰。</p>
+          <p>如今我依然习惯用这种朴素的方式整理随笔——把想法先写进纯文本里，反复删改、朗读、校准节奏，再把它们安放在这个小小的静态网页上。如果你恰好路过这里，欢迎泡杯茶慢慢看。</p>
+        `
+      },
+      essay2: {
+        title: "秋日古寺行记：檐角风铃与石刻残影",
+        date: "2026年10月08日",
+        content: `
+          <p>十月初的清晨带有一丝凉意，山道两旁的林木尚未完全变黄，石阶上还留着夜露的湿痕。</p>
+          <p>站在大殿前仰望斗拱与榫卯结构时，时间仿佛被拉长了。那些历经数百年风雨的木构件并不张扬，只是沉默地承托着屋顶的重量，与山风共同呼吸。</p>
+          <p>（提示：你可以在 HTML 代码底部的 essaysData 中替换这段示例文字，填入你的完整游记。）</p>
+        `
+      },
+      essay3: {
+        title: "为什么我们依然需要一本排版克制的纸质书",
+        date: "2026年09月15日",
+        content: `
+          <p>一本好读的书，版面设计往往是“隐形”的。合适的天头地脚留白、不刺眼的纸张底色、恰到好处的行距与字偶距，能让读者的目光顺畅地滑过每一行文字，而不会感到疲惫。</p>
+          <p>无论是做纸质出版物还是搭建个人网页，克制与秩序永远是最耐看的设计语言。</p>
+        `
+      }
+    };
+
+    function openEssay(id) {
+      const item = essaysData[id];
+      if (!item) return;
+      document.getElementById("readerWinTitle").textContent = item.title + " - 记事本";
+      document.getElementById("readerBody").innerHTML = `
+        <h2>${item.title}</h2>
+        <p style="color:#666; font-size:13px; margin-top:-4px;">发布日期：${item.date}</p>
+        ${item.content}
+      `;
+      document.getElementById("readerModal").style.display = "block";
+    }
+
+    function closeModal(e) {
+      if (e.target.id === "readerModal") {
+        forceCloseModal();
+      }
+    }
+
+    function forceCloseModal() {
+      document.getElementById("readerModal").style.display = "none";
+    }
+
+    // 右下角实时时钟
+    function updateClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("clock").textContent = hh + ":" + mm;
+    }
+    updateClock();
+    setInterval(updateClock, 10000);
+  </script>
+</body>
+</html>
